@@ -32,7 +32,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>BlokeAndDagger.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Rant">
+      <HintPath>C:\Git\Rant\bin\MainBuild\Rant.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,13 +49,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AIController.cs" />
+    <Compile Include="Base\Player.cs" />
+    <Compile Include="Base\Weapon.cs" />
+    <Compile Include="Base\WeaponEnums.cs" />
+    <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="Helpers\Attributes.cs" />
+    <Compile Include="Helpers\ExtendedConsole.cs" />
+    <Compile Include="Helpers\FormattedString.cs" />
+    <Compile Include="Helpers\FormattedText.cs" />
+    <Compile Include="Helpers\ScrollingPane.cs" />
+    <Compile Include="Helpers\SwitchPane.cs" />
+    <Compile Include="IController.cs" />
+    <Compile Include="PlayerController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Weapons\BaseWeapon.cs" />
-    <Compile Include="Weapons\DamageTypes.cs" />
+    <Compile Include="Races\Human.cs" />
+    <Compile Include="Races\Robot.cs" />
+    <Compile Include="Weapons\Clamps.cs" />
+    <Compile Include="Weapons\Fists.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="BlokeAndDagger.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
