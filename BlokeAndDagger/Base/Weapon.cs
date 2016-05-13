@@ -64,12 +64,13 @@ namespace BlokeAndDagger.Base {
         public double GetDamage(Proficiency p) {
             double minDmg;
             double maxDmg;
-            Human.GetProficiencyMultiplier(p, out minDmg, out maxDmg);
-            return Program.GetRandomNumber(minDmg, maxDmg) * Damage;
+            Player.GetProficiencyMultiplier(p, out minDmg, out maxDmg);
+            return Program.Rand.GetRandomNumber(minDmg, maxDmg) * Damage;
         }
 
         public void PrintHeader() {
             ExtendedConsole.PushConsoleColors();
+            
             Renown.SetConsoleColors();
             Console.WriteLine(Name);
             Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -80,17 +81,17 @@ namespace BlokeAndDagger.Base {
                 Attributes.PrintFlagsColor();
                 Console.Write(' ');
             }
-            Console.WriteLine($"{DamageType.FlagsString()} Weapon");
+            Console.WriteLine("Weapon");
             if (Enchantments != Enchantments.None) {
                 Console.Write(" * Enchantments: ");
                 Enchantments.PrintFlagsColor();
                 Console.WriteLine();
             }
-            Console.Write($" * Does {Damage} Damage ");
+            Console.Write($" * Does {BaseDamage} {DamageType.FlagsString()} Damage");
             if (Renown != Renown.Common) {
-                Console.Write($"({BaseDamage} Base Damage, x{GetRenownMultiplier(Renown):0.##} ");
-                Renown.PrintColor();
-                Console.WriteLine(" Multiplier)");
+                Console.Write(", ");
+                Renown.SetConsoleColors();
+                Console.WriteLine($"x{GetRenownMultiplier(Renown):0.##} {Renown} Multiplier");
             } else
                 Console.WriteLine();
             if (!Attributes.HasFlag(Attributes.Indestructible))
@@ -98,18 +99,8 @@ namespace BlokeAndDagger.Base {
             ExtendedConsole.PopConsoleColors();
         }
 
-        public virtual void Setup(Renown? renown = null, Player player = null) {
-            if (!renown.HasValue) {
-                var r = Program.Rand.Next(1, 64 + 32 + 16 + 8 + 4 + 2 + 1 + 1);
-                if (r <= 64) Renown = Renown.Common;
-                else if (r <= 64 + 32) Renown = Renown.Crappy;
-                else if (r <= 64 + 32 + 16) Renown = Renown.Junk;
-                else if (r <= 64 + 32 + 16 + 8) Renown = Renown.Renown;
-                else if (r <= 64 + 32 + 16 + 8 + 4) Renown = Renown.Legendary;
-                else if (r <= 64 + 32 + 16 + 8 + 4 + 2) Renown = Renown.Epic;
-                else if (r == 64 + 32 + 16 + 8 + 4 + 2 + 1) Renown = Renown.Godlike;
-            } else
-                Renown = renown.Value;
+        public virtual void Setup(Player player, Renown? renown = null) {
+            Renown = renown ?? (Renown)Program.Rand.GetRandomEnumValue<Renown>();
 
             Damage = BaseDamage * GetRenownMultiplier(Renown);
             Durability = MaxDurability;
@@ -118,23 +109,23 @@ namespace BlokeAndDagger.Base {
 
             switch (Renown) {
                 case Renown.Renown:
-                    name = name != null ? name.Split(' ')[0] : Program.Rant.Do("<name>");
+                    name = name != null ? name.Split(' ')[0] : Game.Rant.Do("<name>");
                     Name = $"{name}'s {BaseName}";
                     break;
                 case Renown.Legendary:
                     name = name?.Split(' ')[0] ?? "<name>";
                     Name =
-                        $"{Program.Rant.Do($@"{name}[case:lower]'s[case:title]{{|(2)\s{{famed|celebrated|prominent|notable}}}}")} {BaseName}";
+                        $"{Game.Rant.Do($@"{name}[case:lower]'s[case:title]{{|(2)\s{{famed|celebrated|prominent|notable}}}}")} {BaseName}";
                     break;
                 case Renown.Epic:
                     name = name ?? "<name> <surname>";
                     Name =
-                        $"{Program.Rant.Do($@"[case:title]{name}{{|\sthe <adj-cn1>|\sthe <adj-cn2>}}[case:lower]'s")} {BaseName}";
+                        $"{Game.Rant.Do($@"[case:title]{name}{{|\sthe <adj-cn1>|\sthe <adj-cn2>}}[case:lower]'s")} {BaseName}";
                     break;
                 case Renown.Godlike:
                     name = name ?? "<name> <surname>";
                     Name =
-                        $"{Program.Rant.Do($@"[case:title]{name}{{(5)|[numfmt:roman]\s[num:2;19][numfmt:normal]}}{{(3)|(2)\sthe <adj-cn1>|\sthe <adj-cn2>}}[case:lower]'s[case:title]{{|\s<verb-violent.ing>}}")} {BaseName} of {Program.Rant.Do(@"[case:title]<adj-cn2.ness>")}";
+                        $"{Game.Rant.Do($@"[case:title]{name}{{(5)|[numfmt:roman]\s[num:2;19][numfmt:normal]}}{{(3)|(2)\sthe <adj-cn1>|\sthe <adj-cn2>}}[case:lower]'s[case:title]{{|\s<verb-violent.ing>}}")} {BaseName} of {Game.Rant.Do(@"[case:title]<adj-cn2.ness>")}";
                     break;
                 default:
                     Name = BaseName;

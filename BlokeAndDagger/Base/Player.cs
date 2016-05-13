@@ -28,7 +28,9 @@ namespace BlokeAndDagger.Base
 
         public abstract string Name { get; }
         public Dictionary<Type, double> Proficiency { get; } = new Dictionary<Type, double>();
-        public abstract Weapon Weapon { get; protected set; }
+        public abstract Weapon Weapon { get; set; }
+
+        public abstract Type DefaultWeapon { get; }
 
         #endregion Properties
 
@@ -108,5 +110,20 @@ namespace BlokeAndDagger.Base
         internal static Player GetRandomRace() => new Human();
 
         #endregion Methods
+
+        public static void PlayerSummary(Player player) {
+            Console.Write($"{player.Name}, a {player.RaceName}, armed with ");
+            player.Weapon.PrintHeader();
+
+            var proc = player.GetProficiency(player.Weapon);
+            Console.Write($"> {proc.GetDescription()} with {player.Weapon.BaseName}, having {player.Proficiency[player.Weapon.GetType()]:0.##}xp. ");
+            if (proc != Base.Proficiency.Master)
+                Console.WriteLine($"(Next level at {player.GetNextProficiency(player.Weapon):0.##}xp)");
+            else
+                Console.WriteLine();
+            double min, max;
+            Player.GetProficiencyMultiplier(proc, out min, out max);
+            Console.WriteLine($"> multiplier will be between {min:0.##%} and {max:0.##%}");
+        }
     }
 }

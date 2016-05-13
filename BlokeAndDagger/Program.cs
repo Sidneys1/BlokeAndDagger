@@ -1,18 +1,17 @@
-﻿using BlokeAndDagger.Races;
-using System;
-using System.ComponentModel;
-using System.Reflection;
+﻿using System;
 using System.Threading;
 using BlokeAndDagger.Base;
 using BlokeAndDagger.Helpers;
 using Rant.Vocabulary;
 using Rant;
+using SimpleArgv;
 
 namespace BlokeAndDagger {
     internal class Program {
         private const string StartMsg = "[Click to Start]";
         public static Random Rand = new Random();
-        public static RantEngine Rant = new RantEngine(RantDictionary.FromDirectory(@"C:\Git\Rantionary"));
+
+        public static CommandLine CommandLine = new CommandLine(new[] {"--", "-"});
 
         private static readonly string[] TitleArt = {
             @" ▄▀▀█▄▄   ▄▀▀▀▀▄    ▄▀▀▀▀▄   ▄▀▀▄ █  ▄▀▀█▄▄▄▄      ▄▀▀█▄   ▄▀▀▄ ▀▄  ▄▀▀█▄▄ ",
@@ -29,92 +28,53 @@ namespace BlokeAndDagger {
             @"         ▄▀▄▄▄▄▀ █   ▄▀  ▐▀▄▄▄▄▀ ▐ ▐▀▄▄▄▄▀ ▐ ▄▀▄▄▄▄   █     █              ",
             @"        █     ▐  ▐   ▐   ▐         ▐         █    ▐   ▐     ▐              ",
             @"        ▐                                    ▐                             ",
-            @"",
-            @"                               By  Sidneys1"
         };
 
-        private static void Main() {
+        private static void Main(string[] argv) {
+            AddArgumentParsers();
+
+            CommandLine.Parse(argv);
+            
             Console.Title = "Bloke and Dagger";
-            Console.BufferWidth = Console.WindowWidth = 140;
-            Console.BufferHeight = Console.WindowHeight = 35;
+            Console.BufferWidth = Console.WindowWidth = 201;
+            Console.BufferHeight = Console.WindowHeight = 51;
+            Console.CursorVisible = false;
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            var info = ExtendedConsole.ConsoleScreenBufferInfoEx.GetCurrent();
+            info.Width--;
+            info.Height--;
+            info.Apply();
             ExtendedConsole.FixConsoleSize();
             ExtendedConsole.EnableMouseInput();
-            Console.CursorVisible = false;
-            Intro();
 
-            var player = GetRace();
-            var playerController = new PlayerController(player);
+            Console.Clear();
 
-            Console.Title = $"Bloke and Dagger - {player.RaceName} '{player.Name}'";
+            if (!CommandLine.RawArguments.ContainsKey("--SkipIntro"))
+                Intro(info);
+
+            SetupMonokai(info);
+            
             Console.ForegroundColor = ConsoleColor.White;
 
-            Console.Write("You are ");
-            PlayerSummary(player);
-            Console.WriteLine();
-            Console.WriteLine();
+            //Game.Play();
 
-
-            while (player.Health > 0) {
-                Player opponent = new Robot();//Player.GetRandomRace();
-                var ai = new AIController(opponent);
-
-                Console.Write("Your opponent is ");
-                PlayerSummary(opponent);
-                Console.WriteLine();
-                Console.WriteLine();
-
-                var first = Rand.Next(2) == 1;
-                Console.WriteLine("Rolling dice...");
-                Console.WriteLine(first ? "You will make the first move!" : "Your opponent will make the first move!");
-                Console.WriteLine();
-
-                while (player.Health > 0 && opponent.Health > 0) {
-                    if (first) {
-                        Console.Write("Your turn: ");
-                        playerController.Move(opponent);
-                        Console.Write("Their turn: ");
-                        ai.Move(player);
-                    } else {
-                        Console.Write("Their turn: ");
-                        ai.Move(player);
-                        Console.Write("Your turn: ");
-                        playerController.Move(opponent);
-                    }
-
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine("Round over!");
-
-                    if (player.Health == 0) {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("You died.");
-                    } else if (opponent.Health == 0)
-                        Console.WriteLine("Your opponent died.");
-
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    Console.WriteLine($"Player health: {player.Health / player.MaxHealth:0.##%}");
-                    Console.WriteLine($"    AI health: {opponent.Health / opponent.MaxHealth:0.##%}");
-                    Console.WriteLine("Press enter");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.ReadLine();
-                    Console.Clear();
-                }
-            }
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Game Over. Press enter");
+            Console.WriteLine("Press ENTER to exit...");
             Console.ReadLine();
         }
 
-        private static void Intro() {
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
+        private static void AddArgumentParsers()
+        {
+            CommandLine.AddArgument(s=>null, string.Empty);
+            CommandLine.AddArgument(s=>null, "--SkipIntro");
 
-            var info = ExtendedConsole.ConsoleScreenBufferInfoEx.GetCurrent();
+            CommandLine.AddArgument(s => Enum.Parse(typeof(Renown), s[0]), "--InitialRenown");
+        }
 
-            //var cache = info.GetColors();
+        private static void Intro(ExtendedConsole.ConsoleScreenBufferInfoEx info) {
+            var cache = info.GetColors();
 
             info.SetColor(ConsoleColor.DarkBlue, 0, 0, 0);
             info.SetColor(ConsoleColor.DarkGreen, 0, 0, 0);
-            info.Height--;
-            info.Width--; // Bug? The Width/height of GET is always one larger than SET
             info.Apply();
 
             Console.Clear();
@@ -126,7 +86,7 @@ namespace BlokeAndDagger {
             }
 
             Console.SetCursorPosition(info.Width / 2 - StartMsg.Length / 2, Console.CursorTop + 1);
-            //Console.ForegroundColor = ConsoleColor.DarkGreen;
+            
             var clickLine = Console.CursorTop;
             var clickLeft = Console.CursorLeft;
             foreach (var c in StartMsg) {
@@ -135,7 +95,7 @@ namespace BlokeAndDagger {
                 Console.Write(c);
                 info.SetColor(Console.ForegroundColor, 0, 0, 0);
             }
-            //Console.Write(StartMsg);
+            
             var clickRight = Console.CursorLeft;
             Console.ForegroundColor = ConsoleColor.DarkBlue;
 
@@ -151,7 +111,7 @@ namespace BlokeAndDagger {
 
             Thread.Sleep(1000);
 
-            for (int i = 1; i < 255 * 3; i += 8) {
+            for (var i = 1; i < 255 * 3; i += 8) {
                 var v = (int)(255 - i);
                 var c = ConsoleColor.DarkGreen;
                 for (var j = 14; j > 0; j--) {
@@ -213,82 +173,36 @@ namespace BlokeAndDagger {
 
             Thread.Sleep(500);
             Console.Clear();
-            //info.SetColors(cache);
-
-            {
-                info.black.Value = 0x0;
-                info.darkGray.Value = 0x00414746;
-
-                info.darkBlue.Value = 0x00a64c1d;
-                info.blue.Value = 0x00ef9566;
-
-                info.darkGreen.Value = 0x0000995d;
-                info.green.Value = 0x002ee2a6;
-
-                info.darkCyan.Value = 0x00746a31;
-                info.cyan.Value = 0x00efd966;
-
-                info.darkRed.Value = 0x002900b0;
-                info.red.Value = 0x007226f9;
-
-                info.darkMagenta.Value = 0x00b63865;
-                info.magenta.Value = 0x00ff81ae;
-
-                info.darkYellow.Value = 0x001f97fd;
-                info.yellow.Value = 0x0074dbe6;
-
-                info.gray.Value = 0x008a908f;
-                info.white.Value = 0x00f2f8f8;
-            }
+            info.SetColors(cache);
             info.Apply();
-            Console.ForegroundColor = ConsoleColor.White;
-
-            {
-                var c = ConsoleColor.Black;
-                for (var j = 0; j < 16; j++)
-                {
-                    Console.ForegroundColor = c;
-                    Console.WriteLine(c++);
-                }
-            }
         }
 
-        private static Player GetRace() {
-            string line;
-            int race;
-            do {
-                Console.WriteLine("Choose a race:");
-                for (var i = 0; i < Player.PlayerTypes.Length; i++) {
-                    var playerType = Player.PlayerTypes[i];
-                    Console.WriteLine(
-                        $"{i}: {playerType.GetCustomAttribute<DescriptionAttribute>()?.Description ?? playerType.Name}");
-                }
+        private static void SetupMonokai(ExtendedConsole.ConsoleScreenBufferInfoEx info)
+        {
+            info.black.Value = 0x0;
+            info.darkGray.Value = 0x00414746;
 
-                line = Console.ReadLine();
-            } while (!int.TryParse(line, out race));
-            var type = Player.PlayerTypes[race];
+            info.darkBlue.Value = 0x00a64c1d;
+            info.blue.Value = 0x00ef9566;
 
-            Console.Clear();
+            info.darkGreen.Value = 0x0000995d;
+            info.green.Value = 0x002ee2a6;
 
-            var player = (Player)Activator.CreateInstance(type);
-            return player;
+            info.darkCyan.Value = 0x00746a31;
+            info.cyan.Value = 0x00efd966;
+
+            info.darkRed.Value = 0x002900b0;
+            info.red.Value = 0x007226f9;
+
+            info.darkMagenta.Value = 0x00b63865;
+            info.magenta.Value = 0x00ff81ae;
+
+            info.darkYellow.Value = 0x001f97fd;
+            info.yellow.Value = 0x0074dbe6;
+
+            info.gray.Value = 0x008a908f;
+            info.white.Value = 0x00f2f8f8;
+            info.Apply();
         }
-
-        private static void PlayerSummary(Player player) {
-            Console.Write($"{player.Name}, a {player.RaceName}, armed with ");
-            player.Weapon.PrintHeader();
-
-            var proc = player.GetProficiency(player.Weapon);
-            Console.Write($"> {proc.GetDescription()} with {player.Weapon.BaseName}, having {player.Proficiency[player.Weapon.GetType()]:0.##}xp. ");
-            if (proc != Proficiency.Master)
-                Console.WriteLine($"(Next level at {player.GetNextProficiency(player.Weapon):0.##}xp)");
-            else
-                Console.WriteLine();
-            double min, max;
-            Player.GetProficiencyMultiplier(proc, out min, out max);
-            Console.WriteLine($"> multiplier will be between {min:0.##%} and {max:0.##%}");
-        }
-
-        public static double GetRandomNumber(double minimum, double maximum) => Rand.NextDouble() * (maximum - minimum) + minimum;
     }
 }

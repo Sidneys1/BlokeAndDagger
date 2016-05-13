@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlokeAndDagger", "BlokeAndDagger\BlokeAndDagger.csproj", "{AA6EA5D1-1AF0-4F17-8241-660BFDD40DF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleArgv", "..\SimpleArgv\SimpleArgv\SimpleArgv.csproj", "{C637F4AF-D365-4741-94EA-7AADB434BA4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{AA6EA5D1-1AF0-4F17-8241-660BFDD40DF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA6EA5D1-1AF0-4F17-8241-660BFDD40DF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA6EA5D1-1AF0-4F17-8241-660BFDD40DF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C637F4AF-D365-4741-94EA-7AADB434BA4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C637F4AF-D365-4741-94EA-7AADB434BA4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C637F4AF-D365-4741-94EA-7AADB434BA4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C637F4AF-D365-4741-94EA-7AADB434BA4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

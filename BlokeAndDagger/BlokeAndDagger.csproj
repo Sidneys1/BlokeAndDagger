@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BlokeAndDagger</RootNamespace>
     <AssemblyName>BlokeAndDagger</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -54,6 +55,7 @@
     <Compile Include="Base\Weapon.cs" />
     <Compile Include="Base\WeaponEnums.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="Helpers\Attributes.cs" />
     <Compile Include="Helpers\ExtendedConsole.cs" />
     <Compile Include="Helpers\FormattedString.cs" />
@@ -74,6 +76,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="BlokeAndDagger.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SimpleArgv\SimpleArgv\SimpleArgv.csproj">
+      <Project>{c637f4af-d365-4741-94ea-7aadb434ba4f}</Project>
+      <Name>SimpleArgv</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

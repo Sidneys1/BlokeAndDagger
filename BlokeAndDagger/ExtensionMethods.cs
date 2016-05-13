@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Linq;
 using System.Text;
 using BlokeAndDagger.Helpers;
@@ -257,6 +256,8 @@ namespace BlokeAndDagger {
             }
             return rand.GetWeightedRandom(cache);
         }
+
+        public static double GetRandomNumber(this Random rand, double minimum, double maximum) => rand.NextDouble() * (maximum - minimum) + minimum;
 
         #endregion
     }
