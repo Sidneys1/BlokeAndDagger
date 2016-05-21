@@ -9,14 +9,16 @@ using ExtendedConsole;
 using ExtendedConsole.Enums;
 using ExtendedConsole.Structs;
 using OoeyGui;
+using OoeyGui.Containers;
 using EConsole = ExtendedConsole.ExtendedConsole;
+using _OoeyGui = OoeyGui.OoeyGui;
 
 namespace BlokeAndDagger {
     internal class Program {
         private const string StartMsg = "[Click to Start]";
         public static Random Rand = new Random();
 
-        public static CommandLine CommandLine = new CommandLine(new[] {"--", "-"});
+        public static CommandLine CommandLine = new CommandLine(new[] { "--", "-" });
 
         private static readonly string[] TitleArt = {
             @" ▄▀▀█▄▄   ▄▀▀▀▀▄    ▄▀▀▀▀▄   ▄▀▀▄ █  ▄▀▀█▄▄▄▄      ▄▀▀█▄   ▄▀▀▄ ▀▄  ▄▀▀█▄▄ ",
@@ -54,40 +56,55 @@ namespace BlokeAndDagger {
             info.Apply();
             EConsole.FixConsoleSize();
             EConsole.EnableMouseInput();
-
             Console.Clear();
-            Console.ReadLine();
-            if (!CommandLine.RawArguments.ContainsKey("--SkipIntro"))
-                Intro(info);
+
+            //if (!CommandLine.RawArguments.ContainsKey("--SkipIntro"))
+            //    Intro(info);
 
             SetupMonokai(info);
 
             Console.ForegroundColor = ConsoleColor.White;
 
-            OoeyGui.OoeyGui.Init();
+            _OoeyGui.Init();
 
-            var text = "";
-            var uiElement = new Label(50, 1, 35, 1, 0, "All the text you could ever want!") {BackgroundColor = ConsoleColor.DarkGray};
-            var uiElement2 = new Label(3, 0, 35, 1, 1, text);
-            OoeyGui.OoeyGui.AddChild(uiElement);
-            OoeyGui.OoeyGui.AddChild(uiElement2);
-            var w = new Stopwatch();
-            var avg = new Stack<long>();
-            var col = 1;
-            OoeyGui.OoeyGui.Repaint();
-            for (var i = 0; i < 100000; i++) {
-                w.Restart();
-                uiElement2.Text = new FormattedString(text.Select(c => new FormattedText(new string(c, 1), (ConsoleColor) (col++ %15 + 1))).ToArray());
-                if(i % 256 == 0)
-                    uiElement2.Y=(short)((uiElement2.Y + 1) % 25);
-                uiElement.Y = (short) ((uiElement.Y + 1)%25);
-                OoeyGui.OoeyGui.Repaint();
-                w.Stop();
-                if (avg.Count == 100) avg.Pop();
-                avg.Push(w.ElapsedTicks);
-                var avgd = avg.Average();
-                text = $"{(TimeSpan.TicksPerSecond/avgd),6:n0} FPS ({TimeSpan.TicksPerMillisecond/avgd:n0}ms average draw time)";
+            var stackPanel = new StackPanel(2, 1, (short)(Console.BufferWidth - 4), 0) { BackgroundColor = ConsoleColor.DarkGray };
+            var scrollPanel = new ScrollPanel(2, 1, (short)(Console.BufferWidth - 4), (short)(Console.BufferHeight - 2), 0) { BackgroundColor = ConsoleColor.DarkGray };
+            for (var i = 0; i < 5000; i++) {
+                var label = new Label(0, 0, 1, i, $"Text #{i + 1:n0}!") {ForegroundColor = ConsoleColor.Red};
+                #region Color
+
+                switch (i%4) {
+                    case 0:
+                        label.BackgroundColor = ConsoleColor.Black;
+                        break;
+                    case 1:
+                        label.BackgroundColor = ConsoleColor.DarkGray;
+                        break;
+                    case 2:
+                        label.BackgroundColor = ConsoleColor.Gray;
+                        break;
+
+                    case 3:
+                        label.BackgroundColor = ConsoleColor.White;
+                        break;
+                }
+
+                #endregion
+                stackPanel.AddChild(label);
             }
+            scrollPanel.AddChild(stackPanel);
+            _OoeyGui.AddChild(scrollPanel);
+            _OoeyGui.Repaint();
+
+            Console.ReadLine();
+
+            for (double i = 0; i <= 1; i += 1.0/5000) {
+                scrollPanel.ScrollPosition = i;
+                _OoeyGui.Repaint();
+            }
+
+            scrollPanel.ScrollPosition = 1;
+            _OoeyGui.Repaint();
 
             //Game.Play();
 
@@ -110,14 +127,14 @@ namespace BlokeAndDagger {
             info.Apply();
 
             Console.Clear();
-            var titleWidth = info.Width/2 - TitleArt[0].Length/2;
-            Console.SetCursorPosition(titleWidth, info.Height/2 - TitleArt.Length/2 - 1);
+            var titleWidth = info.Width / 2 - TitleArt[0].Length / 2;
+            Console.SetCursorPosition(titleWidth, info.Height / 2 - TitleArt.Length / 2 - 1);
             foreach (var t in TitleArt) {
                 Console.WriteLine(t);
                 Console.CursorLeft = titleWidth;
             }
 
-            Console.SetCursorPosition(info.Width/2 - StartMsg.Length/2, Console.CursorTop + 1);
+            Console.SetCursorPosition(info.Width / 2 - StartMsg.Length / 2, Console.CursorTop + 1);
 
             var clickLine = Console.CursorTop;
             var clickLeft = Console.CursorLeft;
@@ -131,7 +148,7 @@ namespace BlokeAndDagger {
             var clickRight = Console.CursorLeft;
             Console.ForegroundColor = ConsoleColor.DarkBlue;
 
-            const int sleep = 2000/255;
+            const int sleep = 2000 / 255;
             for (byte i = 0; i < 255; i++) {
                 info.SetColor(ConsoleColor.Black, i, i, i);
                 var c = ConsoleColor.DarkGreen;
@@ -143,12 +160,12 @@ namespace BlokeAndDagger {
 
             Thread.Sleep(1000);
 
-            for (var i = 1; i < 255*3; i += 8) {
-                var v = (int) (255 - i);
+            for (var i = 1; i < 255 * 3; i += 8) {
+                var v = (int)(255 - i);
                 var c = ConsoleColor.DarkGreen;
                 for (var j = 14; j > 0; j--) {
-                    var y = Math.Min(255, v + (j*32));
-                    var x = (byte) Math.Max(0, y);
+                    var y = Math.Min(255, v + (j * 32));
+                    var x = (byte)Math.Max(0, y);
                     info.SetColor(c++, x, x, x);
                 }
                 info.Apply();
@@ -174,8 +191,7 @@ namespace BlokeAndDagger {
                     for (var j = 0; j < 14; j++)
                         info.SetColor(c++, 128, 128, 128);
                     info.Apply();
-                }
-                else if (over && !(ly == clickLine && lx >= clickLeft && lx < clickRight)) {
+                } else if (over && !(ly == clickLine && lx >= clickLeft && lx < clickRight)) {
                     over = false;
                     var c = ConsoleColor.DarkGreen;
                     for (var j = 0; j < 14; j++)
@@ -189,8 +205,7 @@ namespace BlokeAndDagger {
                         ms = true;
                     else if (ms && !mDown)
                         break;
-                }
-                else if (ms) ms = false;
+                } else if (ms) ms = false;
             } while (true);
 
             {
@@ -202,7 +217,7 @@ namespace BlokeAndDagger {
             for (byte i = 255; i > 1; i -= 2) {
                 info.SetColor(ConsoleColor.Black, i, i, i);
                 info.Apply();
-                Thread.Sleep(sleep/2);
+                Thread.Sleep(sleep / 2);
             }
 
             Thread.Sleep(500);
