@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using BlokeAndDagger.Base;
-using BlokeAndDagger.Helpers;
-using Rant.Vocabulary;
-using Rant;
 using SimpleArgv;
+using ExtendedConsole;
+using ExtendedConsole.Enums;
+using ExtendedConsole.Structs;
+using OoeyGui;
+using EConsole = ExtendedConsole.ExtendedConsole;
 
 namespace BlokeAndDagger {
     internal class Program {
@@ -30,47 +35,74 @@ namespace BlokeAndDagger {
             @"        ▐                                    ▐                             ",
         };
 
+        private const int BD_WIDTH = 201;
+        private const int BD_HEIGHT = 51;
+
         private static void Main(string[] argv) {
             AddArgumentParsers();
 
             CommandLine.Parse(argv);
-            
+
             Console.Title = "Bloke and Dagger";
-            Console.BufferWidth = Console.WindowWidth = 201;
-            Console.BufferHeight = Console.WindowHeight = 51;
+            Console.BufferWidth = Console.WindowWidth = 100;
+            Console.BufferHeight = Console.WindowHeight = 25;
             Console.CursorVisible = false;
             Console.ForegroundColor = ConsoleColor.DarkBlue;
-            var info = ExtendedConsole.ConsoleScreenBufferInfoEx.GetCurrent();
+            var info = ConsoleScreenBufferInfoEx.GetCurrent();
             info.Width--;
             info.Height--;
             info.Apply();
-            ExtendedConsole.FixConsoleSize();
-            ExtendedConsole.EnableMouseInput();
+            EConsole.FixConsoleSize();
+            EConsole.EnableMouseInput();
 
             Console.Clear();
-
+            Console.ReadLine();
             if (!CommandLine.RawArguments.ContainsKey("--SkipIntro"))
                 Intro(info);
 
             SetupMonokai(info);
-            
+
             Console.ForegroundColor = ConsoleColor.White;
+
+            OoeyGui.OoeyGui.Init();
+
+            var text = "";
+            var uiElement = new Label(50, 1, 35, 1, 0, "All the text you could ever want!") {BackgroundColor = ConsoleColor.DarkGray};
+            var uiElement2 = new Label(3, 0, 35, 1, 1, text);
+            OoeyGui.OoeyGui.AddChild(uiElement);
+            OoeyGui.OoeyGui.AddChild(uiElement2);
+            var w = new Stopwatch();
+            var avg = new Stack<long>();
+            var col = 1;
+            OoeyGui.OoeyGui.Repaint();
+            for (var i = 0; i < 100000; i++) {
+                w.Restart();
+                uiElement2.Text = new FormattedString(text.Select(c => new FormattedText(new string(c, 1), (ConsoleColor) (col++ %15 + 1))).ToArray());
+                if(i % 256 == 0)
+                    uiElement2.Y=(short)((uiElement2.Y + 1) % 25);
+                uiElement.Y = (short) ((uiElement.Y + 1)%25);
+                OoeyGui.OoeyGui.Repaint();
+                w.Stop();
+                if (avg.Count == 100) avg.Pop();
+                avg.Push(w.ElapsedTicks);
+                var avgd = avg.Average();
+                text = $"{(TimeSpan.TicksPerSecond/avgd),6:n0} FPS ({TimeSpan.TicksPerMillisecond/avgd:n0}ms average draw time)";
+            }
 
             //Game.Play();
 
-            Console.WriteLine("Press ENTER to exit...");
+            //Console.WriteLine("Press ENTER to exit...");
             Console.ReadLine();
         }
 
-        private static void AddArgumentParsers()
-        {
-            CommandLine.AddArgument(s=>null, string.Empty);
-            CommandLine.AddArgument(s=>null, "--SkipIntro");
+        private static void AddArgumentParsers() {
+            CommandLine.AddArgument(s => null, string.Empty);
+            CommandLine.AddArgument(s => null, "--SkipIntro");
 
             CommandLine.AddArgument(s => Enum.Parse(typeof(Renown), s[0]), "--InitialRenown");
         }
 
-        private static void Intro(ExtendedConsole.ConsoleScreenBufferInfoEx info) {
+        private static void Intro(ConsoleScreenBufferInfoEx info) {
             var cache = info.GetColors();
 
             info.SetColor(ConsoleColor.DarkBlue, 0, 0, 0);
@@ -78,15 +110,15 @@ namespace BlokeAndDagger {
             info.Apply();
 
             Console.Clear();
-            var titleWidth = info.Width / 2 - TitleArt[0].Length / 2;
-            Console.SetCursorPosition(titleWidth, info.Height / 2 - TitleArt.Length / 2 - 1);
+            var titleWidth = info.Width/2 - TitleArt[0].Length/2;
+            Console.SetCursorPosition(titleWidth, info.Height/2 - TitleArt.Length/2 - 1);
             foreach (var t in TitleArt) {
                 Console.WriteLine(t);
                 Console.CursorLeft = titleWidth;
             }
 
-            Console.SetCursorPosition(info.Width / 2 - StartMsg.Length / 2, Console.CursorTop + 1);
-            
+            Console.SetCursorPosition(info.Width/2 - StartMsg.Length/2, Console.CursorTop + 1);
+
             var clickLine = Console.CursorTop;
             var clickLeft = Console.CursorLeft;
             foreach (var c in StartMsg) {
@@ -95,11 +127,11 @@ namespace BlokeAndDagger {
                 Console.Write(c);
                 info.SetColor(Console.ForegroundColor, 0, 0, 0);
             }
-            
+
             var clickRight = Console.CursorLeft;
             Console.ForegroundColor = ConsoleColor.DarkBlue;
 
-            const int sleep = 2000 / 255;
+            const int sleep = 2000/255;
             for (byte i = 0; i < 255; i++) {
                 info.SetColor(ConsoleColor.Black, i, i, i);
                 var c = ConsoleColor.DarkGreen;
@@ -111,30 +143,30 @@ namespace BlokeAndDagger {
 
             Thread.Sleep(1000);
 
-            for (var i = 1; i < 255 * 3; i += 8) {
-                var v = (int)(255 - i);
+            for (var i = 1; i < 255*3; i += 8) {
+                var v = (int) (255 - i);
                 var c = ConsoleColor.DarkGreen;
                 for (var j = 14; j > 0; j--) {
-                    var y = Math.Min(255, v + (j * 32));
-                    var x = (byte)Math.Max(0, y);
+                    var y = Math.Min(255, v + (j*32));
+                    var x = (byte) Math.Max(0, y);
                     info.SetColor(c++, x, x, x);
                 }
                 info.Apply();
                 Thread.Sleep(sleep);
             }
 
-            var buf = new ExtendedConsole.InputRecord[1];
+            var buf = new InputRecord[1];
             var ms = false;
             var lx = 0;
             var ly = 0;
             var over = false;
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             do {
-                ExtendedConsole.GetConsoleInput(ref buf);
-                if ((buf[0].EventType & 0x0002) != 0x0002) continue;
-                if ((buf[0].MouseEvent.dwEventFlags & 0x0001) == 0x0001) {
-                    lx = buf[0].MouseEvent.dwMousePosition.X;
-                    ly = buf[0].MouseEvent.dwMousePosition.Y;
+                EConsole.GetConsoleInput(ref buf);
+                if (!buf[0].EventType.HasFlag(EventType.MouseEvent)) continue;
+                if (buf[0].MouseEvent.EventFlags.HasFlag(MouseEventFlags.MouseMoved)) {
+                    lx = buf[0].MouseEvent.MousePosition.X;
+                    ly = buf[0].MouseEvent.MousePosition.Y;
                 }
                 if (!over && ly == clickLine && lx >= clickLeft && lx < clickRight) {
                     over = true;
@@ -142,7 +174,8 @@ namespace BlokeAndDagger {
                     for (var j = 0; j < 14; j++)
                         info.SetColor(c++, 128, 128, 128);
                     info.Apply();
-                } else if (over && !(ly == clickLine && lx >= clickLeft && lx < clickRight)) {
+                }
+                else if (over && !(ly == clickLine && lx >= clickLeft && lx < clickRight)) {
                     over = false;
                     var c = ConsoleColor.DarkGreen;
                     for (var j = 0; j < 14; j++)
@@ -150,13 +183,14 @@ namespace BlokeAndDagger {
                     info.Apply();
                 }
 
-                var mDown = (buf[0].MouseEvent.dwButtonState & 0x0001) == 0x0001;
+                var mDown = buf[0].MouseEvent.ButtonState.HasFlag(MouseButtonState.FirstButton);
                 if (over) {
                     if (!ms && mDown)
                         ms = true;
                     else if (ms && !mDown)
                         break;
-                } else if (ms) ms = false;
+                }
+                else if (ms) ms = false;
             } while (true);
 
             {
@@ -168,7 +202,7 @@ namespace BlokeAndDagger {
             for (byte i = 255; i > 1; i -= 2) {
                 info.SetColor(ConsoleColor.Black, i, i, i);
                 info.Apply();
-                Thread.Sleep(sleep / 2);
+                Thread.Sleep(sleep/2);
             }
 
             Thread.Sleep(500);
@@ -177,31 +211,30 @@ namespace BlokeAndDagger {
             info.Apply();
         }
 
-        private static void SetupMonokai(ExtendedConsole.ConsoleScreenBufferInfoEx info)
-        {
-            info.black.Value = 0x0;
-            info.darkGray.Value = 0x00414746;
+        private static void SetupMonokai(ConsoleScreenBufferInfoEx info) {
+            info.Black.Value = 0x0;
+            info.DarkGray.Value = 0x00414746;
 
-            info.darkBlue.Value = 0x00a64c1d;
-            info.blue.Value = 0x00ef9566;
+            info.DarkBlue.Value = 0x00a64c1d;
+            info.Blue.Value = 0x00ef9566;
 
-            info.darkGreen.Value = 0x0000995d;
-            info.green.Value = 0x002ee2a6;
+            info.DarkGreen.Value = 0x0000995d;
+            info.Green.Value = 0x002ee2a6;
 
-            info.darkCyan.Value = 0x00746a31;
-            info.cyan.Value = 0x00efd966;
+            info.DarkCyan.Value = 0x00746a31;
+            info.Cyan.Value = 0x00efd966;
 
-            info.darkRed.Value = 0x002900b0;
-            info.red.Value = 0x007226f9;
+            info.DarkRed.Value = 0x002900b0;
+            info.Red.Value = 0x007226f9;
 
-            info.darkMagenta.Value = 0x00b63865;
-            info.magenta.Value = 0x00ff81ae;
+            info.DarkMagenta.Value = 0x00b63865;
+            info.Magenta.Value = 0x00ff81ae;
 
-            info.darkYellow.Value = 0x001f97fd;
-            info.yellow.Value = 0x0074dbe6;
+            info.DarkYellow.Value = 0x001f97fd;
+            info.Yellow.Value = 0x0074dbe6;
 
-            info.gray.Value = 0x008a908f;
-            info.white.Value = 0x00f2f8f8;
+            info.Gray.Value = 0x008a908f;
+            info.White.Value = 0x00f2f8f8;
             info.Apply();
         }
     }

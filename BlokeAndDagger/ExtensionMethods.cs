@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using BlokeAndDagger.Helpers;
+using ExtendedConsole;
 
 namespace BlokeAndDagger {
     public static class ExtensionMethods {
@@ -38,29 +39,29 @@ namespace BlokeAndDagger {
         }
 
         public static void PrintFlagsColor(this Enum value) {
-            ExtendedConsole.PushConsoleColors();
+            ExtendedConsole.ExtendedConsole.PushConsoleColors();
             //value.SetConsoleColors();
             var vals = Enum.GetValues(value.GetType()).OfType<Enum>().Where(value.HasFlag).ToArray();
             if (vals.Length == 0) return;
             vals[0].PrintColor();
             if (vals.Length > 1) {
                 for (var i = 1; i < vals.Length - 1; i++) {
-                    ExtendedConsole.PeekConsoleColors();
+                    ExtendedConsole.ExtendedConsole.PeekConsoleColors();
                     Console.Write(", ");
                     vals[i].PrintColor();
                 }
-                ExtendedConsole.PeekConsoleColors();
+                ExtendedConsole.ExtendedConsole.PeekConsoleColors();
                 Console.Write(vals.Length > 2 ? ", and" : " and ");
                 vals[vals.Length - 1].PrintColor();
             }
-            ExtendedConsole.PopConsoleColors();
+            ExtendedConsole.ExtendedConsole.PopConsoleColors();
         }
 
         public static void PrintColor(this Enum value) {
-            ExtendedConsole.PushConsoleColors();
+            ExtendedConsole.ExtendedConsole.PushConsoleColors();
             value.SetConsoleColors();
             Console.Write(value.GetDescription());
-            ExtendedConsole.PopConsoleColors();
+            ExtendedConsole.ExtendedConsole.PopConsoleColors();
         }
 
         public static ConsoleColorAttribute ConsoleColor(this Enum value) {
@@ -72,141 +73,6 @@ namespace BlokeAndDagger {
         public static void SetConsoleColors(this Enum value) {
             (Attribute.GetCustomAttribute(value.GetType().GetField(value.ToString()), typeof(ConsoleColorAttribute))
                 as ConsoleColorAttribute)?.SetColors();
-        }
-
-        #endregion
-
-        #region String/FormattedString
-
-        public static FormattedText Reset(this string str)
-            => new FormattedText(str, reset: true);
-
-        public static FormattedText Blue(this string str, bool dark = false)
-            => new FormattedText(str, dark ? System.ConsoleColor.DarkBlue : System.ConsoleColor.Blue);
-
-        public static FormattedText Blue(this FormattedText str, bool dark = false) {
-            str.ForegroundColor = dark ? System.ConsoleColor.DarkBlue : System.ConsoleColor.Blue;
-            return str;
-        }
-
-        public static FormattedText BlueBack(this string str, bool dark = false)
-            => new FormattedText(str, bcolor: dark ? System.ConsoleColor.DarkBlue : System.ConsoleColor.Blue);
-
-        public static FormattedText BlueBack(this FormattedText str, bool dark = false) {
-            str.BackgroundColor = dark ? System.ConsoleColor.DarkBlue : System.ConsoleColor.Blue;
-            return str;
-        }
-
-        public static FormattedText Cyan(this string str, bool dark = false)
-            => new FormattedText(str, dark ? System.ConsoleColor.DarkCyan : System.ConsoleColor.Cyan);
-
-        public static FormattedText Cyan(this FormattedText str, bool dark = false) {
-            str.ForegroundColor = dark ? System.ConsoleColor.DarkCyan : System.ConsoleColor.Cyan;
-            return str;
-        }
-
-        public static FormattedText CyanBack(this string str, bool dark = false)
-            => new FormattedText(str, bcolor: dark ? System.ConsoleColor.DarkCyan : System.ConsoleColor.Cyan);
-
-        public static FormattedText CyanBack(this FormattedText str, bool dark = false) {
-            str.BackgroundColor = dark ? System.ConsoleColor.DarkCyan : System.ConsoleColor.Cyan;
-            return str;
-        }
-
-        public static FormattedText DarkGray(this string str, bool dark = false)
-            => new FormattedText(str, dark ? System.ConsoleColor.Black : System.ConsoleColor.DarkGray);
-
-        public static FormattedText DarkGray(this FormattedText str, bool dark = false) {
-            str.ForegroundColor = dark ? System.ConsoleColor.Black : System.ConsoleColor.DarkGray;
-            return str;
-        }
-
-        public static FormattedText DarkGrayBack(this string str, bool dark = false)
-            => new FormattedText(str, bcolor: dark ? System.ConsoleColor.Black : System.ConsoleColor.DarkGray);
-
-        public static FormattedText DarkGrayBack(this FormattedText str, bool dark = false) {
-            str.BackgroundColor = dark ? System.ConsoleColor.Black : System.ConsoleColor.DarkGray;
-            return str;
-        }
-
-        public static FormattedText Green(this string str, bool dark = false)
-            => new FormattedText(str, dark ? System.ConsoleColor.DarkGreen : System.ConsoleColor.Green);
-
-        public static FormattedText Green(this FormattedText str, bool dark = false) {
-            str.ForegroundColor = dark ? System.ConsoleColor.DarkGreen : System.ConsoleColor.Green;
-            return str;
-        }
-
-        public static FormattedText GreenBack(this string str, bool dark = false)
-            => new FormattedText(str, bcolor: dark ? System.ConsoleColor.DarkGreen : System.ConsoleColor.Green);
-
-        public static FormattedText GreenBack(this FormattedText str, bool dark = false) {
-            str.BackgroundColor = dark ? System.ConsoleColor.DarkGreen : System.ConsoleColor.Green;
-            return str;
-        }
-
-        public static FormattedText Magenta(this string str, bool dark = false)
-            => new FormattedText(str, dark ? System.ConsoleColor.DarkMagenta : System.ConsoleColor.Magenta);
-
-        public static FormattedText Magenta(this FormattedText str, bool dark = false) {
-            str.ForegroundColor = dark ? System.ConsoleColor.DarkMagenta : System.ConsoleColor.Magenta;
-            return str;
-        }
-
-        public static FormattedText MagentaBack(this string str, bool dark = false)
-            => new FormattedText(str, bcolor: dark ? System.ConsoleColor.DarkMagenta : System.ConsoleColor.Magenta);
-
-        public static FormattedText MagentaBack(this FormattedText str, bool dark = false) {
-            str.BackgroundColor = dark ? System.ConsoleColor.DarkMagenta : System.ConsoleColor.Magenta;
-            return str;
-        }
-
-        public static FormattedText Red(this string str, bool dark = false)
-            => new FormattedText(str, dark ? System.ConsoleColor.DarkRed : System.ConsoleColor.Red);
-
-        public static FormattedText Red(this FormattedText str, bool dark = false) {
-            str.ForegroundColor = dark ? System.ConsoleColor.DarkRed : System.ConsoleColor.Red;
-            return str;
-        }
-
-        public static FormattedText RedBack(this string str, bool dark = false)
-            => new FormattedText(str, bcolor: dark ? System.ConsoleColor.DarkRed : System.ConsoleColor.Red);
-
-        public static FormattedText RedBack(this FormattedText str, bool dark = false) {
-            str.BackgroundColor = dark ? System.ConsoleColor.DarkRed : System.ConsoleColor.Red;
-            return str;
-        }
-
-        public static FormattedText White(this string str, bool dark = false)
-            => new FormattedText(str, dark ? System.ConsoleColor.Gray : System.ConsoleColor.White);
-
-        public static FormattedText White(this FormattedText str, bool dark = false) {
-            str.ForegroundColor = dark ? System.ConsoleColor.Gray : System.ConsoleColor.White;
-            return str;
-        }
-
-        public static FormattedText WhiteBack(this string str, bool dark = false)
-            => new FormattedText(str, bcolor: dark ? System.ConsoleColor.Gray : System.ConsoleColor.White);
-
-        public static FormattedText WhiteBack(this FormattedText str, bool dark = false) {
-            str.BackgroundColor = dark ? System.ConsoleColor.Gray : System.ConsoleColor.White;
-            return str;
-        }
-
-        public static FormattedText Yellow(this string str, bool dark = false)
-            => new FormattedText(str, dark ? System.ConsoleColor.DarkYellow : System.ConsoleColor.Yellow);
-
-        public static FormattedText Yellow(this FormattedText str, bool dark = false) {
-            str.ForegroundColor = dark ? System.ConsoleColor.DarkYellow : System.ConsoleColor.Yellow;
-            return str;
-        }
-
-        public static FormattedText YellowBack(this string str, bool dark = false)
-            => new FormattedText(str, bcolor: dark ? System.ConsoleColor.DarkYellow : System.ConsoleColor.Yellow);
-
-        public static FormattedText YellowBack(this FormattedText str, bool dark = false) {
-            str.BackgroundColor = dark ? System.ConsoleColor.DarkYellow : System.ConsoleColor.Yellow;
-            return str;
         }
 
         #endregion

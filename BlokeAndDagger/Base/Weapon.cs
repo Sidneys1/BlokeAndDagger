@@ -6,6 +6,8 @@ using System.Reflection;
 using BlokeAndDagger.Helpers;
 using BlokeAndDagger.Races;
 
+using EConsole = ExtendedConsole.ExtendedConsole;
+
 namespace BlokeAndDagger.Base {
     public abstract class Weapon {
         public static Type[] WeaponTypes { get; }
@@ -69,7 +71,7 @@ namespace BlokeAndDagger.Base {
         }
 
         public void PrintHeader() {
-            ExtendedConsole.PushConsoleColors();
+            EConsole.PushConsoleColors();
             
             Renown.SetConsoleColors();
             Console.WriteLine(Name);
@@ -96,7 +98,7 @@ namespace BlokeAndDagger.Base {
                 Console.WriteLine();
             if (!Attributes.HasFlag(Attributes.Indestructible))
                 Console.WriteLine($" * {Durability / MaxDurability * 100:0.##}% Durability");
-            ExtendedConsole.PopConsoleColors();
+            EConsole.PopConsoleColors();
         }
 
         public virtual void Setup(Player player, Renown? renown = null) {

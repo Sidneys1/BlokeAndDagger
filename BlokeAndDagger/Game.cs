@@ -1,9 +1,7 @@
 using System;
-using System.CodeDom;
 using System.ComponentModel;
 using System.Reflection;
 using BlokeAndDagger.Base;
-using BlokeAndDagger.Races;
 using Rant;
 using Rant.Vocabulary;
 
@@ -99,7 +97,7 @@ namespace BlokeAndDagger
                 }
 
                 line = Console.ReadLine();
-            } while (!Int32.TryParse(line, out race));
+            } while (!int.TryParse(line, out race));
             var type = Player.PlayerTypes[race];
 
             Console.Clear();

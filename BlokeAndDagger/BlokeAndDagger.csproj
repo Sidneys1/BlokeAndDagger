@@ -42,12 +42,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AIController.cs" />
@@ -57,11 +52,6 @@
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Helpers\Attributes.cs" />
-    <Compile Include="Helpers\ExtendedConsole.cs" />
-    <Compile Include="Helpers\FormattedString.cs" />
-    <Compile Include="Helpers\FormattedText.cs" />
-    <Compile Include="Helpers\ScrollingPane.cs" />
-    <Compile Include="Helpers\SwitchPane.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="PlayerController.cs" />
     <Compile Include="Program.cs" />
@@ -78,10 +68,23 @@
     <Content Include="BlokeAndDagger.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ExtendedConsole\ExtendedConsole.csproj">
+      <Project>{848F2B55-5518-4DBB-B574-2FE4824F15AE}</Project>
+      <Name>ExtendedConsole</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OoeyGui\OoeyGui.csproj">
+      <Project>{5bd60d1a-1384-426e-80c9-b3c049e1e5bd}</Project>
+      <Name>OoeyGui</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\SimpleArgv\SimpleArgv\SimpleArgv.csproj">
       <Project>{c637f4af-d365-4741-94ea-7aadb434ba4f}</Project>
       <Name>SimpleArgv</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Helpers\EwwyGui\Base\" />
+    <Folder Include="Helpers\EwwyGui\Elements\" />
+    <Folder Include="Helpers\EwwyGui\Types\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
