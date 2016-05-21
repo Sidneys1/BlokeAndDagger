@@ -1,0 +1,6 @@
+[submodule "ExtendedConsole"]
+	path = ExtendedConsole
+	url = https://github.com/Sidneys1/ExtendedConsole.git
+[submodule "OoeyGui"]
+	path = OoeyGui
+	url = https://github.com/Sidneys1/OoeyGui.git
