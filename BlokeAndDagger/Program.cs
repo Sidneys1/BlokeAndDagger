@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using BlokeAndDagger.Base;
 using SimpleArgv;
@@ -10,6 +12,7 @@ using ExtendedConsole.Enums;
 using ExtendedConsole.Structs;
 using OoeyGui;
 using OoeyGui.Containers;
+using OoeyGui.Elements;
 using EConsole = ExtendedConsole.ExtendedConsole;
 using _OoeyGui = OoeyGui.OoeyGui;
 
@@ -37,6 +40,35 @@ namespace BlokeAndDagger {
             @"        ▐                                    ▐                             ",
         };
 
+        private static readonly string[] BrandArt = {
+            @"\:.                                                 .:m:                                         .:/",
+            @"`hMds+.                                          .:sds`                                      .+sdMh`",
+            @"  sN::ohho:.                                  .ohh+`                                    .:ohho::Ns  ",
+            @"   :N+  `:ohds-.                            .hh:                                    ./sdho:`  +N:   ",
+            @"    `dh.     -+ydh+-                        mo                                 .-+hdy+`     .hd`    ",
+            @"      +Ny-       `-yddo:.                   yd:                            .:oddy/`       .yN+      ",
+            @"       `sMd+`        `-sddy-.                -ohy+.                    ./ydds/`        .+dMs`       ",
+            @"         -NNddo:.        `:ohmy+.               `\yd-              -+ymho:'        .:oddNN-         ",
+            @"          -Ny`-+sys\-.       `'-sdho:.             sd         .:ohds/:'       .-/sys+' sN-          ",
+            @"           `dN+    `+ssyyor.     `:smMdo.         .mo      -odMNy:.     .-oyyys+`    .hd`           ",
+            @"             `mNo.       `:MsyhhmMMMMMMMMd/``````qOp`````\dMMMMMMMMNdhhM+:`       ./hd`             ",
+            @"               -yNdo-         +MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM+`       .-ohNy`               ",
+            @"                 `mMddho:.   :MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  MMMM:   .+sdddMm`                 ",
+            @"                  `hN+`-\shyyNMMP'  'VMMMMMM..MMMMMMMM..MMMMM''MMMM''MMyhhs/-`+Nh`                  ",
+            @"                    `mNs.   yMMM      MMMMMMMMMMMMMMMMMMMMMMM..MMMM..MMy`  .sNm`                    ",
+            @"                      :yNNyyMMMMo.  .oMMMMMMMMMMMMMMMMMMMMMMMMMM  MMMMMMsyNNy:`                     ",
+            @"                        'oMMMMMMMMMMMMMMM  MMMMMMMMMMMMP'  'VMMMMMMMMMMMMMo`                        ",
+            @"                         `dMMMMMMMMMMMM      MMMMMMMMMM      MMMMMMMMMMMMd`                         ",
+            @"                         -MMMMMMMMMMMMMMM  MMMMMMMMMMMMo.  .oMMMMMMMMMMMMM-                         ",
+            @"                         sMMMMMMMMMMMMMMMMMMNmmdbbddbmmNMMMMMMMMMMMMMMMMMMs                         ",
+            @"                         dMMMMMMMMMMMMMMd+-'            '-+dMMMMMMMMMMMMMMd                         ",
+            @"                         NMMMMMMMMMMMMy'`                  `'yMMMMMMMMMMMMN                         ",
+            @"                         MMMMMMMMMMMh'                        'hMMMMMMMMMMM                         ",
+            @"                         NMMMMMMMMd'                            'dMMMMMMMMN                         ",
+            @"                         oMMMMMMd:          Borne  Games          :dMMMMMMo                         ",
+            @"                          sqQQy:              Presents              :qQQys                          "
+        };
+
         private const int BD_WIDTH = 201;
         private const int BD_HEIGHT = 51;
 
@@ -46,8 +78,8 @@ namespace BlokeAndDagger {
             CommandLine.Parse(argv);
 
             Console.Title = "Bloke and Dagger";
-            Console.BufferWidth = Console.WindowWidth = 100;
-            Console.BufferHeight = Console.WindowHeight = 25;
+            Console.BufferWidth = Console.WindowWidth = BD_WIDTH;
+            Console.BufferHeight = Console.WindowHeight = BD_HEIGHT;
             Console.CursorVisible = false;
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             var info = ConsoleScreenBufferInfoEx.GetCurrent();
@@ -58,53 +90,90 @@ namespace BlokeAndDagger {
             EConsole.EnableMouseInput();
             Console.Clear();
 
-            //if (!CommandLine.RawArguments.ContainsKey("--SkipIntro"))
-            //    Intro(info);
+            if (!CommandLine.RawArguments.ContainsKey("--SkipIntro"))
+                Intro(info);
 
             SetupMonokai(info);
 
             Console.ForegroundColor = ConsoleColor.White;
 
+            //var buf = EConsole.CurrentOutputBuffer;
+            //Console.WriteLine("Test!");
+            //Console.ReadLine();
+            //EConsole.CurrentOutputBuffer = EConsole.CreateNewScreenBuffer();
+            //Console.WriteLine("Test2!");
+            //Console.ReadLine();
+            //EConsole.CurrentOutputBuffer = buf;
+            
             _OoeyGui.Init();
-
-            var stackPanel = new StackPanel(2, 1, (short)(Console.BufferWidth - 4), 0) { BackgroundColor = ConsoleColor.DarkGray };
-            var scrollPanel = new ScrollPanel(2, 1, (short)(Console.BufferWidth - 4), (short)(Console.BufferHeight - 2), 0) { BackgroundColor = ConsoleColor.DarkGray };
-            for (var i = 0; i < 5000; i++) {
-                var label = new Label(0, 0, 1, i, $"Text #{i + 1:n0}!") {ForegroundColor = ConsoleColor.Red};
-                #region Color
-
-                switch (i%4) {
-                    case 0:
-                        label.BackgroundColor = ConsoleColor.Black;
-                        break;
-                    case 1:
-                        label.BackgroundColor = ConsoleColor.DarkGray;
-                        break;
-                    case 2:
-                        label.BackgroundColor = ConsoleColor.Gray;
-                        break;
-
-                    case 3:
-                        label.BackgroundColor = ConsoleColor.White;
-                        break;
-                }
-
-                #endregion
-                stackPanel.AddChild(label);
-            }
-            scrollPanel.AddChild(stackPanel);
-            _OoeyGui.AddChild(scrollPanel);
+            var begin = new FormattedText("Progress: ");
+            var mid = new FormattedText(" (", reset:true);
+            var mid2 = new FormattedText(" of step ", reset: true);
+            var end = new FormattedText(" out of 10)", reset: true);
+            var perc="0%".Green();
+            var perc2="0%".Green();
+            var step="1".Green();
+            var lbl = new Label(35, 3, 40, 1, 0, "");
+            var prog = new ProgressBar(15, 5, 80, 1, 1);
+            var prog2 = new DoubleProgressBar(5,7,100,1,2);
+            lbl.Text = new FormattedString(begin, perc, mid, perc2, mid2, step, end);
+            _OoeyGui.AddChild(lbl);
+            _OoeyGui.AddChild(prog);
+            _OoeyGui.AddChild(prog2);
             _OoeyGui.Repaint();
-
             Console.ReadLine();
-
-            for (double i = 0; i <= 1; i += 1.0/5000) {
-                scrollPanel.ScrollPosition = i;
-                _OoeyGui.Repaint();
+            for (var i = 1; i <= 10; i++) {
+                prog2.Progress =
+                prog.Progress = i / 10.0;
+                step = $"{i}".Green();
+                perc = $"{i}%".Green();
+                for (double j = 0; j <= 100; j++) {
+                    prog2.SubProgress = j / 100.0;
+                    perc2 = $"{j,3}%".Green();
+                    lbl.Text = new FormattedString(begin, perc, mid, perc2, mid2, step, end);
+                    _OoeyGui.Repaint();
+                    Thread.Sleep(1);
+                }
             }
 
-            scrollPanel.ScrollPosition = 1;
-            _OoeyGui.Repaint();
+            //var stackPanel = new StackPanel(2, 1, (short)(Console.BufferWidth - 4), 0) { BackgroundColor = ConsoleColor.DarkGray };
+            //var scrollPanel = new ScrollPanel(2, 1, (short)(Console.BufferWidth - 4), (short)(Console.BufferHeight - 2), 0) { BackgroundColor = ConsoleColor.DarkGray };
+            //for (var i = 0; i < 100; i++) {
+            //    var label = new Label(0, 0, 1, i, $"Text #{i + 1:n0}!") { ForegroundColor = ConsoleColor.Red };
+            //    #region Color
+
+            //    switch (i % 4) {
+            //        case 0:
+            //            label.BackgroundColor = ConsoleColor.Black;
+            //            break;
+            //        case 1:
+            //            label.BackgroundColor = ConsoleColor.DarkGray;
+            //            break;
+            //        case 2:
+            //            label.BackgroundColor = ConsoleColor.Gray;
+            //            break;
+
+            //        case 3:
+            //            label.BackgroundColor = ConsoleColor.White;
+            //            break;
+            //    }
+
+            //    #endregion
+            //    stackPanel.AddChild(label);
+            //}
+            //scrollPanel.AddChild(stackPanel);
+            //_OoeyGui.AddChild(scrollPanel);
+            //_OoeyGui.Repaint();
+
+            //Console.ReadLine();
+
+            //for (double i = 0; i <= 1; i += 1.0 / 5000) {
+            //    scrollPanel.ScrollPosition = i;
+            //    _OoeyGui.Repaint();
+            //}
+
+            //scrollPanel.ScrollPosition = 1;
+            //_OoeyGui.Repaint();
 
             //Game.Play();
 
