@@ -73,10 +73,6 @@
       <Project>{5bd60d1a-1384-426e-80c9-b3c049e1e5bd}</Project>
       <Name>OoeyGui</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Rant\Rant\Rant.csproj">
-      <Project>{a4b6fd1a-44a6-42d2-b4aa-57bc85d2cdd7}</Project>
-      <Name>Rant</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SimpleArgv\SimpleArgv\SimpleArgv.csproj">
       <Project>{c637f4af-d365-4741-94ea-7aadb434ba4f}</Project>
       <Name>SimpleArgv</Name>
