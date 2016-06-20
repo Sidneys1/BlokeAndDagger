@@ -4,3 +4,15 @@
 [submodule "OoeyGui"]
 	path = OoeyGui
 	url = https://github.com/Sidneys1/OoeyGui.git
+[submodule "SimpleArgv"]
+	path = SimpleArgv
+	url = git@github.com:Sidneys1/SimpleArgv.git
+[submodile "SimpleArgv"]
+	branch = master
+[submodile "OoeyGui"]
+	branch = master
+[submodule "Rant"]
+	path = Rant
+	url = git@github.com:TheBerkin/Rant.git
+[submodile "Rant"]
+	branch = master
