@@ -37,9 +37,6 @@
     <ApplicationIcon>BlokeAndDagger.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Rant">
-      <HintPath>C:\Git\Rant\bin\MainBuild\Rant.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -68,10 +65,6 @@
     <Content Include="BlokeAndDagger.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SimpleArgv\SimpleArgv\SimpleArgv.csproj">
-      <Project>{c637f4af-d365-4741-94ea-7aadb434ba4f}</Project>
-      <Name>SimpleArgv</Name>
-    </ProjectReference>
     <ProjectReference Include="..\OoeyGui\ExtendedConsole\ExtendedConsole\ExtendedConsole.csproj">
       <Project>{848f2b55-5518-4dbb-b574-2fe4824f15ae}</Project>
       <Name>ExtendedConsole</Name>
@@ -79,6 +72,10 @@
     <ProjectReference Include="..\OoeyGui\OoeyGui\OoeyGui.csproj">
       <Project>{5bd60d1a-1384-426e-80c9-b3c049e1e5bd}</Project>
       <Name>OoeyGui</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimpleArgv\SimpleArgv\SimpleArgv.csproj">
+      <Project>{c637f4af-d365-4741-94ea-7aadb434ba4f}</Project>
+      <Name>SimpleArgv</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
